@@ -1,3 +1,4 @@
+//1) crea el modelo de user y lo exporta para que lo reciba el service (modelUser)
 const { Schema, model, default: mongoose } = require('mongoose');
 
 const UserSchema = new mongoose.Schema({

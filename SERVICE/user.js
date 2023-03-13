@@ -1,3 +1,6 @@
+//2) importo modelUser del modelo/persistencia y creo la funciones para trabajar con la db
+//cuando tengo los usuarios, hago un return para que los reciba el CONTROLLER
+
 const modelUser = require('../MODELS/user.js');
 
 function validationId(array, id) {

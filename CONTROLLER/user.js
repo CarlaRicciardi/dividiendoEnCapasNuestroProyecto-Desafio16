@@ -1,3 +1,7 @@
+//3) importo getAllUsersService del servicio y creo la funcion getAllUsersController()
+//que va a extraer la data (si es necesario) delrequest y va a recibir la data (usuarios) que la envia el service
+// ese resultado se la da al front (res.json/res.render,etc)
+
 const { getAllUsersService, getUserByIdService, postUserService, putUserService, deleteUserByIdService } = require('../SERVICE/user.js');
 
 async function getAllUsersController(req, res) {
@@ -30,7 +34,7 @@ async function putUserController(req, res) {
 
 async function deleteUserByIdController(req, res) {
   const id = req.params;
-  console.log(id)
+  console.log(id);
   await deleteUserByIdService(id);
 
   res.json(`user eliminado. ID: ${id}`);

@@ -1,3 +1,6 @@
+//5) por ultimo, conectamos el router con la app. para eso, importo routerUsuario
+//y lo conectamos con app.use('/usuarios', usuarios)
+
 const express = require('express');
 const app = express();
 const httpServer = require('http').createServer(app);
@@ -13,6 +16,17 @@ const modelUser = require('./MODELS/user.js');
 const bcrypt = require('bcrypt');
 const routes = require('./routes.js');
 
+//middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(compression());
+app.use('/public', express.static(__dirname + '/public'));
+app.use(passport.initialize()); //inicializamos passport dentro de express
+
+//routerAuth
+const routerAuth = require('./ROUTES/auth.js');
+app.use('/api', routerAuth);
+
 //routerUser
 const routerUser = require('./ROUTES/user.js');
 app.use('/api', routerUser);
@@ -24,16 +38,10 @@ app.use('/api', routerCart);
 if (process.env.MODE != 'production') {
   require('dotenv').config();
 }
-
 const PORT = process.env.PORT;
 const MODE = process.env.MODE;
 const MONGO_URL = process.env.MONGO_URL;
 
-//middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(compression());
-app.use('/public', express.static(__dirname + '/public'));
 function checkAuthentication(req, res, next) {
   if (req.isAuthenticated()) {
     //este metodo lo trae passport, no esta declarada en el proyecto
@@ -170,7 +178,6 @@ passport.deserializeUser((id, done) => {
   });
 });
 
-app.use(passport.initialize()); //inicializamos passport dentro de express
 app.use(passport.session()); //meto la sesion de passport adentro de la app (serializ y deserializ)
 
 // FRONT END
@@ -182,32 +189,32 @@ app.get('/main', checkAuthentication, async (req, res) => {
 });
 
 //INDEX
-app.get('/', routes.getRoute);
+// app.get('/', routes.getRoute);
 
 //LOGIN
-app.get('/login', routes.getLogin);
-app.get('/failLogin', routes.getFailLogin);
-app.post('/login', passport.authenticate('login', { failureRedirect: '/failLogin' }), routes.postLogin);
+// app.get('/login', routes.getLogin);
+// app.get('/failLogin', routes.getFailLogin);
+// app.post('/login', passport.authenticate('login', { failureRedirect: '/failLogin' }), routes.postLogin);
 
 //SIGNUP
-app.get('/signup', routes.getSignUp);
-app.get('/failSignUp', routes.getFailSignUp);
-app.post('/signup', passport.authenticate('signup', { failureRedirect: '/failSignUp' }), routes.postSignUp);
+// app.get('/signup', routes.getSignUp);
+// app.get('/failSignUp', routes.getFailSignUp);
+// app.post('/signup', passport.authenticate('signup', { failureRedirect: '/failSignUp' }), routes.postSignUp);
 
 //LOGOUT
-app.get('/logout', routes.getLogout);
+// app.get('/logout', routes.getLogout);
 
 //GET INFO
-app.get('/info', routes.getInfo);
+// app.get('/info', routes.getInfo);
 
-app.get('/datos', (req, res) => {
-  console.log(`port: ${PORT} -> Fyh: ${Date.now()}`);
-  res.send(`Servidor express <span style="color:blueviolet;">(Nginx)</span> en ${PORT} - 
-    <b>PID ${process.pid}</b> - ${new Date().toLocaleString()}`);
-});
+// app.get('/datos', (req, res) => {
+//   console.log(`port: ${PORT} -> Fyh: ${Date.now()}`);
+//   res.send(`Servidor express <span style="color:blueviolet;">(Nginx)</span> en ${PORT} -
+//     <b>PID ${process.pid}</b> - ${new Date().toLocaleString()}`);
+// });
 
 //FAILROUTE
-app.get('*', routes.failRoute);
+// app.get('*', routes.failRoute);
 
 //BACK END
 
@@ -235,3 +242,5 @@ io.on('connection', async (socket) => {
 httpServer.listen(PORT, () => {
   console.log(`Servidor http escuchando en el puerto http://localhost:${PORT}`);
 });
+
+module.exports = checkAuthentication;
