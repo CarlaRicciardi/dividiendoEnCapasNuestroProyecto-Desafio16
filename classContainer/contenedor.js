@@ -1,5 +1,3 @@
-const { modelCart } = require('../MODELS/cart.js');
-const { modelProduct } = require('../MODELS/product.js');
 const mongoose = require('mongoose');
 
 function validacionId(array, id) {
