@@ -8,13 +8,13 @@ const io = require('socket.io')(httpServer);
 const MongoStore = require('connect-mongo');
 const session = require('express-session');
 const mongoose = require('mongoose');
-const ProductoSchema = require('./MODELS/product.js');
+const modelProduct = require('./MODELS/product.js');
 const compression = require('compression');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const modelUser = require('./MODELS/user.js');
 const bcrypt = require('bcrypt');
-const routes = require('./routes.js');
+const router = require('./ROUTES/index.js');
 
 //middlewares
 app.use(express.json());
@@ -23,17 +23,11 @@ app.use(compression());
 app.use('/public', express.static(__dirname + '/public'));
 app.use(passport.initialize()); //inicializamos passport dentro de express
 
-//routerAuth
-const routerAuth = require('./ROUTES/auth.js');
-app.use('/api', routerAuth);
+const ContenedorProd = require('./classContainer/contenedor.js');
+const ContenedorMsgs = require('./classContainer/contenedorMsgs.js');
 
-//routerUser
-const routerUser = require('./ROUTES/user.js');
-app.use('/api', routerUser);
-
-//routerCart
-const routerCart = require('./ROUTES/cart.js');
-app.use('/api', routerCart);
+const containerProd = new ContenedorProd(modelProduct);
+const containerMsgs = new ContenedorMsgs('msgsTable2');
 
 if (process.env.MODE != 'production') {
   require('dotenv').config();
@@ -50,12 +44,6 @@ function checkAuthentication(req, res, next) {
     res.redirect('/login');
   }
 }
-
-const ContenedorProd = require('./classContainer/contenedor.js');
-const ContenedorMsgs = require('./classContainer/contenedorMsgs.js');
-
-const containerProd = new ContenedorProd({ name: 'products', schema: ProductoSchema });
-const containerMsgs = new ContenedorMsgs('msgsTable2');
 
 //CONNECTION HANDLEBARS
 const { engine } = require('express-handlebars');
@@ -239,8 +227,12 @@ io.on('connection', async (socket) => {
   });
 });
 
+app.use('/api', router); //esta abajo de mongo y passport
+
 httpServer.listen(PORT, () => {
   console.log(`Servidor http escuchando en el puerto http://localhost:${PORT}`);
 });
 
 module.exports = checkAuthentication;
+//1) crear carpeta middleware
+//2)auth.middleware.js
