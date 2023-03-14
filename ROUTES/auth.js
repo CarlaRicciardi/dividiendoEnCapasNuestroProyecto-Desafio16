@@ -4,11 +4,18 @@ const passport = require('passport');
 
 const { getRoute, getLogin, getFailLogin, getSignUp, getFailSignUp, failRoute, getLogout, postLogin, postSignUp } = require('../CONTROLLER/auth.js');
 
+// routerAuth.get('/', getRoute); // hacer un menu mas adelante.. 
+
 routerAuth.get('/login', getLogin);
 routerAuth.post('/login', passport.authenticate('login', { failureRedirect: '/failLogin' }), postLogin);
-// app.post('/login', passport.authenticate('login', { failureRedirect: '/failLogin' }), routes.postLogin);
+routerAuth.get('/failLogin', getFailLogin);
 
-// routerAuth.put('/auth/:id', putUserController);
-// routerAuth.delete('/auth/:id', deleteUserByIdController);
+routerAuth.get('/signup', getSignUp);
+routerAuth.get('/failSignUp', getFailSignUp);
+routerAuth.post('/signup', passport.authenticate('signup', { failureRedirect: '/failSignUp' }), postSignUp);
+
+routerAuth.get('/logout', getLogout);
+
+routerAuth.get('*', failRoute);
 
 module.exports = routerAuth;

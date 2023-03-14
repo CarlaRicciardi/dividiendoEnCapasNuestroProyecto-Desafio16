@@ -17,6 +17,13 @@ const sendProd = () => {
   return;
 };
 
+let cart = [];
+
+const addToCart = (productId) => {
+  cart.push(productId)
+  console.log('cart:', cart);
+};
+
 const render = (data) => {
   let html = '';
   data.forEach((obj) => {
@@ -24,11 +31,16 @@ const render = (data) => {
     <td class='align-middle text-center'>${obj.title}</td>
     <td class='align-middle text-center'>$${obj.price}</td>
     <td class='align-middle text-center'><img src='${obj.thumbnail}' width='50' height='auto' class='img-fluid' /></td>
-    <td class='align-middle text-center'><button type="button" class="btn btn-success">Agregar al carrito</button></td>
+    <td class='align-middle text-center'><button type="button" class="btn btn-success" id='${obj._id}' onclick='addToCart()'>Agregar al carrito</button></td>
     </tr>`;
+    document.getElementById('productsList').innerHTML = html;
+    const botonAddToCart = document.getElementById(`${obj._id}`);
+    console.log('obj.id1:', `${obj._id}`);
+    botonAddToCart.addEventListener('click', (e) => {
+      e.preventDefault()
+      addToCart(`${obj._id}`);
+    });
   });
-  document.getElementById('productsList').innerHTML = html;
-  //productsList viene de main.hbs - <tbody id='productsList'> // linea 40
 };
 
 //4) atrapar desde el front el array de productos actualizado
