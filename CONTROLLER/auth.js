@@ -53,7 +53,7 @@ const getLogout = (req, res) => {
     if (err) {
       res.send('No se pudo deslogear');
     } else {
-      res.render('logout', { user });
+      res.redirect('/logout');
     }
   });
 };
