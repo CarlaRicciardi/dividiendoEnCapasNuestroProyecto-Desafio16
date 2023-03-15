@@ -1,11 +1,10 @@
 const { getAllProductsService, getProductByIdService, postProductService, putProductService, deleteProductByIdService } = require('../SERVICE/product.js');
 
-async function getAllProductsController(req, res) {
+const getAllProductsController = async (req, res) => {
   try {
     const getAllProducts = await getAllProductsService();
-    console.log(getAllProducts);
-
-    res.json(getAllProducts);
+console.log('getallproducts:', getAllProducts)
+    res.render('allProducts', {data: getAllProducts });
   } catch (error) {
     console.log(error);
   }

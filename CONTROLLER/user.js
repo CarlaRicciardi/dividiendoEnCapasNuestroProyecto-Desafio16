@@ -1,43 +1,88 @@
-//3) importo getAllUsersService del servicio y creo la funcion getAllUsersController()
-//que va a extraer la data (si es necesario) delrequest y va a recibir la data (usuarios) que la envia el service
-// ese resultado se la da al front (res.json/res.render,etc)
+const logger = require('../utils/loggerWinston.js');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
-const { getAllUsersService, getUserByIdService, postUserService, putUserService, deleteUserByIdService } = require('../SERVICE/user.js');
+const { postLoginService, postSignupService } = require('../SERVICE/user.js');
 
-async function getAllUsersController(req, res) {
-  const getAllUsers = await getAllUsersService();
-  console.log(getAllUsers);
-  res.json(getAllUsers);
+function getLoginController(req, res) {
+  logger.log('info', '/login - GET');
+  if (req.isAuthenticated()) {
+    const { username, password } = req.user;
+    const user = { username, password };
+    res.render('main', {user});
+  } else {
+    res.render('login', {});
+  }
 }
 
-async function getUserByIdController(req, res) {
-  const userId = req.params;
-  await getUserByIdService(userId);
+const getFailLoginController = (req, res) => {
+  logger.log('info', '/faillogin - GET');
+  res.render('failLogin', {});
+};
 
-  res.json(userId);
-}
+const getSignupController = (req, res) => {
+  logger.log('info', '/signup - GET');
+  if (req.isAuthenticated()) {
+    const { username, password, name, address, age, phone, url } = req.user;
+    const user = { username, password, name, address, age, phone, url };
+    req.session.user = user
+    res.redirect('/main');
+  } else {
+    res.render('signup', {});
+  }
+};
 
-async function postUserController(req, res) {
-  const dataUser = req.body;
-  await postUserService(dataUser);
+const getFailSignupController = (req, res) => {
+  logger.log('info', '/failsignup - GET');
+  res.render('failSignUp', {});
+};
 
-  res.json(dataUser);
-}
+const getLogoutController = (req, res) => {
+  logger.log('info', '/logout - GET');
+  const { username, password } = req.user;
+  const user = { username, password };
+  req.session.user = user
+  req.session.destroy((err) => {
+    if (err) {
+      logger.log('error', err);
+      res.send('No se pudo deslogear');
+    } else {
+      res.redirect('/logout');
+    }
+  });
+};
 
-async function putUserController(req, res) {
-  const id = req.params;
-  const dataUser = req.body;
-  await putUserService(id, username, password, name, address, age, phone, url);
+const failRouteController = (req, res) => {
+  logger.warn('failRoute');
+  res.render('failRoute', {});
 
-  res.json(id, dataUser);
-}
+  res.status(404);
+};
 
-async function deleteUserByIdController(req, res) {
-  const id = req.params;
-  console.log(id);
-  await deleteUserByIdService(id);
+const postLoginController = async (req, res) => {
+  const { username, password } = req.user;
+  const user = await postLoginService(username);
+  req.session.user = user
+  res.redirect('/main');
+  logger.log('info', '/login - POST - render main.hbs');
+};
 
-  res.json(`user eliminado. ID: ${id}`);
-}
+const postSignupController = async (req, res) => {
+  logger.log('info', '/signup - POST');
+  const { username, password, name, address, age, phone, url } = req.user;
+  const user = { username, password, name, address, age, phone, url };
+  req.session.user = user
+  await postSignupService(user);
+  res.redirect('/main');
+};
 
-module.exports = { getAllUsersController, getUserByIdController, postUserController, putUserController, deleteUserByIdController };
+module.exports = {
+  getLoginController,
+  getFailLoginController,
+  getSignupController,
+  getFailSignupController,
+  failRouteController,
+  getLogoutController,
+  postLoginController,
+  postSignupController,
+};

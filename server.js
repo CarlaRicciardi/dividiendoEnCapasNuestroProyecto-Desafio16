@@ -5,11 +5,11 @@ const httpServer = require('http').createServer(app);
 const MongoStore = require('connect-mongo');
 const session = require('express-session');
 const mongoose = require('mongoose');
-const modelProduct = require('./MODELS/product.js');
+const ProductoSchema = require('./MODELS/product.js');
 const compression = require('compression');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const modelUser = require('./MODELS/user.js');
+const { modelUser } = require('./MODELS/user.js');
 const bcrypt = require('bcrypt');
 const router = require('./ROUTES/index.js');
 
@@ -23,7 +23,7 @@ app.use(passport.initialize()); //inicializamos passport dentro de express
 const ContenedorProd = require('./classContainer/contenedor.js');
 // const ContenedorMsgs = require('./classContainer/contenedorMsgs.js');
 
-const containerProd = new ContenedorProd(modelProduct);
+const containerProd = new ContenedorProd({ name: 'products', schema: ProductoSchema });
 // const containerMsgs = new ContenedorMsgs('msgsTable2');
 
 if (process.env.MODE != 'production') {
@@ -35,7 +35,6 @@ const MONGO_URL = process.env.MONGO_URL;
 
 function checkAuthentication(req, res, next) {
   if (req.isAuthenticated()) {
-    //este metodo lo trae passport, no esta declarada en el proyecto
     next();
   } else {
     res.redirect('/login');
@@ -168,8 +167,15 @@ app.use(passport.session()); //meto la sesion de passport adentro de la app (ser
 // FRONT END
 app.get('/main', checkAuthentication, async (req, res) => {
   const products = await containerProd.getAll();
-  if (products) {
-    res.render('main', { products, user: req.session.user });
+  console.log('products en server:', products);
+  const productsFixed = products.map((item) => {
+    return { id: item._id, title: item.title, price: item.price, thumbnail: item.thumbnail };
+  });
+  if (productsFixed) {
+    res.render('main', {
+      products: productsFixed,
+      user: req.session.user,
+    });
   }
 });
 
@@ -201,7 +207,3 @@ app.use('/api', router); //tiene que estar abajo de mongo y passport
 httpServer.listen(PORT, () => {
   console.log(`Servidor http escuchando en el puerto http://localhost:${PORT}`);
 });
-
-module.exports = checkAuthentication;
-//1) crear carpeta middleware
-//2)auth.middleware.js

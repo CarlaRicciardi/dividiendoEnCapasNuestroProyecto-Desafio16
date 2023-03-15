@@ -1,15 +1,21 @@
-//4) requiero express y creo un router routerUsuario y tambien lo exportamos
-//importo las funciones creadas en el controlador, en este caso getUsuariosController()
-//y conecto la ruta con esa funcion
-
 const express = require('express');
 const routerUser = express.Router();
-const { getAllUsersController, getUserByIdController, postUserController, putUserController, deleteUserByIdController } = require('../CONTROLLER/user.js');
+const passport = require('passport');
+const LocalStrategy = require("passport-local").Strategy;
 
-routerUser.get('/users', getAllUsersController);
-routerUser.get('/users/:id', getUserByIdController);
-routerUser.post('/users', postUserController);
-routerUser.put('/users/:id', putUserController);
-routerUser.delete('/users/:id', deleteUserByIdController);
+const { getLoginController, getFailLoginController, getSignupController, getFailSignupController, failRouteController, getLogoutController, postLoginController, postSignupController } = require('../CONTROLLER/user.js');
+
+
+routerUser.get('/login', getLoginController);
+routerUser.post('/login', passport.authenticate('login', { failureRedirect: '/failLogin' }), postLoginController);
+routerUser.get('/failLogin', getFailLoginController);
+
+routerUser.get('/signup', getSignupController);
+routerUser.get('/failSignUp', getFailSignupController);
+routerUser.post('/signup', passport.authenticate('signup', { failureRedirect: '/failSignUp' }), postSignupController);
+
+routerUser.get('/logout', getLogoutController);
+
+routerUser.get('*', failRouteController);
 
 module.exports = routerUser;

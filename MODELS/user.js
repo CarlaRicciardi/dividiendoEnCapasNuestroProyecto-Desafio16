@@ -1,5 +1,4 @@
-//1) crea el modelo de user y lo exporta para que lo reciba el service (modelUser)
-const { Schema, model, default: mongoose } = require('mongoose');
+const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true, max: 100 },
@@ -12,4 +11,10 @@ const UserSchema = new mongoose.Schema({
 });
 
 const modelUser = mongoose.model('users', UserSchema);
-module.exports = modelUser;
+
+const findByUsername = async (username) => {
+  const userFound = await modelUser.findOne({ username: username });
+  return userFound;
+};
+
+module.exports = { modelUser, findByUsername };

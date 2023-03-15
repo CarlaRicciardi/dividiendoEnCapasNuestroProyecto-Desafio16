@@ -36,8 +36,7 @@ const render = (data) => {
     document.getElementById('productsList').innerHTML = html;
     const botonAddToCart = document.getElementById(`${obj._id}`);
     console.log('obj.id1:', `${obj._id}`);
-    botonAddToCart.addEventListener('click', (e) => {
-      e.preventDefault()
+    botonAddToCart.addEventListener('click', () => {
       addToCart(`${obj._id}`);
     });
   });
@@ -45,6 +44,7 @@ const render = (data) => {
 
 //4) atrapar desde el front el array de productos actualizado
 socket.on('products', (data) => {
+  console.log('socketsprueba')
   render(data);
 });
 
