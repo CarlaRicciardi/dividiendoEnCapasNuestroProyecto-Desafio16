@@ -8,10 +8,10 @@ const { getLoginController, getFailLoginController, getSignupController, getFail
 
 routerUser.get('/login', getLoginController);
 routerUser.post('/login', passport.authenticate('login', { failureRedirect: '/failLogin' }), postLoginController);
-routerUser.get('/failLogin', getFailLoginController);
+routerUser.get('/api/failLogin', getFailLoginController);
 
 routerUser.get('/signup', getSignupController);
-routerUser.get('/failSignUp', getFailSignupController);
+routerUser.get('/api/failsingUp', getFailSignupController);
 routerUser.post('/signup', passport.authenticate('signup', { failureRedirect: '/failSignUp' }), postSignupController);
 
 routerUser.get('/logout', getLogoutController);

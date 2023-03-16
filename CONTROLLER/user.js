@@ -47,7 +47,7 @@ const getLogoutController = (req, res) => {
       logger.log('error', err);
       res.send('No se pudo deslogear');
     } else {
-      res.redirect('/logout');
+      res.render('logout',{user})
     }
   });
 };

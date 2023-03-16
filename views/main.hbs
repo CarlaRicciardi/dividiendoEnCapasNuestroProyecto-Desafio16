@@ -26,11 +26,12 @@
       </div>
     </div>
     <br />
-    <button type='button' class='btn btn-outline-danger'><a href='/logout' style='text-decoration: none;'>Salir</a></button>
+    <button type='button' class='btn btn-outline-danger'><a href='/api/logout' style='text-decoration: none;'>Salir</a></button>
   </div>
 </section>
 
 {{! FORMULARIO INGRESO PRODUCTO }}
+<br />
 <section class='p-4 bg-light'>
   <h1 class='text-secondary text-center'>Ingrese una fruta</h1>
   <form onsubmit='return false'>
@@ -55,33 +56,23 @@
 
 {{! LISTADO PRODUCTOS }}
 {{! products viene del archivo server.js // linea 74  }}
+<br />
 {{#if products}}
+  <h1 class='text-secondary text-center'>Listado de Productos</h1>
   {{#each products}}
-    <p>{{this.title}}</p>
-    {{!-- <button type="button" class="btn btn-success" id='${obj._id}' onclick='addToCart()'>Agregar al carrito</button> --}}
-    {{! <h1 class='text-secondary text-center'>Listado de productos</h1>
-    <div class='container'>
-      <div class='row'>
-        <div class='col'>
-          <table class='table table-dark table-striped table-hover align-middle'>
-            <thead>
-              <tr>
-                <th class='text-center'>Nombre</th>
-                <th class='text-center'>Precio</th>
-                <th class='text-center'>Foto</th>
-                <th class='text-center'>Agregar al carrito</th>
-              </tr>
-            </thead>
-            <tbody id='productsList'>
-            </tbody>
-          </table>
-        </div>
+    <div class='card' style='width: 18rem;'>
+      <img src={{this.thumbnail}} class='card-img-top' alt='...' />
+      <div class='card-body'>
+        <h5 class='card-title'>{{this.title}}</h5>
+        <p class='card-text'>{{this.price}}</p>
+        <button type='button' class='btn btn-success' id='${obj._id}' onclick='addToCart()'>Agregar al carrito</button>
       </div>
-    </div> }}
+    </div>
   {{/each}}
 {{/if}}
 
 {{! CENTRO DE MENSAJES }}
+<br />
 <section class='p-4 bg-light'>
   <h1 class='text-secondary text-center'>Centro de Mensajes</h1>
   <form onsubmit='return false'>
